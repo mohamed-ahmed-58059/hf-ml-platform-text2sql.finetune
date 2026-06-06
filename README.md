@@ -4,6 +4,9 @@ Fine-tuning a small open LLM (QLoRA) for **text-to-SQL** — chasing frontier-mo
 at a fraction of the per-query cost. Built on **WikiSQL**, with a clean Stage/Pipeline
 architecture for data prep, training, and execution-accuracy evaluation.
 
+**🤗 Model:** [Llama-3.1-8B-text2sql-wikisql](https://huggingface.co/mohamed-ahmed-58059/Llama-3.1-8B-text2sql-wikisql)
+ · **Dataset:** [wikisql-text2sql](https://huggingface.co/datasets/mohamed-ahmed-58059/wikisql-text2sql)
+
 ## Headline result
 
 A QLoRA fine-tune of **Llama-3.1-8B** beats the frontier-cheap baseline on WikiSQL dev

@@ -216,3 +216,15 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Downloaded datasets
+data/
+
+# Training checkpoints / LoRA adapters (large)
+out/
+
+# Weights & Biases local run logs
+wandb/
+
+# vLLM serve log
+vllm.log

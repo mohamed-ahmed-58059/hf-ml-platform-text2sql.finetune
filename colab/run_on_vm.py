@@ -55,7 +55,7 @@ sh(f"pip install -q -r {REQS}")
 env = dict(os.environ)
 env.update({
     "T2S_RESUME_FROM": "",                  # fresh run (the local checkpoint path won't exist here)
-    "T2S_LOG_TO_WANDB": "false",            # no W&B key needed on the VM
+    "T2S_LOG_TO_WANDB": "true",             # log to W&B (WANDB_API_KEY comes from .env)
     "T2S_SMOKE": "true" if SMOKE else "false",
     "T2S_PUSH_TO_HUB": "false" if SMOKE else "true",  # FULL run streams checkpoints to the Hub
     "T2S_SAVE_STEPS": "200",

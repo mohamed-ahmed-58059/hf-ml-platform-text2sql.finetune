@@ -22,28 +22,48 @@ PROJECT = "text2sql"
 
 BASE_MODEL = "meta-llama/Llama-3.1-8B"   # the one we have access to (3.2 is a separate gate)
 
-EPOCHS = 1
-BATCH_SIZE = 8     # fits the 12GB 3080 Ti at seq 256 (smoke-verified, no OOM)
-GRAD_ACCUM = 1     # effective batch = 8
+
+# --- env overrides --------------------------------------------------------
+# Knobs that change per-environment (e.g. a remote Colab T4 vs the local 3080 Ti)
+# can be set via T2S_* process env vars without editing this file. When the var
+# is unset the original local default is used, so existing behaviour is unchanged.
+def _env_bool(name, default):
+    v = os.environ.get(name)
+    return default if v is None else v.strip().lower() in ("1", "true", "yes", "on")
+
+
+def _env_int(name, default):
+    v = os.environ.get(name)
+    return default if v is None else int(v)
+
+
+def _env_str(name, default):
+    v = os.environ.get(name)
+    return default if v is None else v
+# --------------------------------------------------------------------------
+
+EPOCHS = _env_int("T2S_EPOCHS", 1)
+BATCH_SIZE = _env_int("T2S_BATCH_SIZE", 8)     # fits the 12GB 3080 Ti / 16GB T4 at seq 256
+GRAD_ACCUM = _env_int("T2S_GRAD_ACCUM", 1)     # effective batch = BATCH_SIZE * GRAD_ACCUM
 MAX_SEQ_LEN = 256
 LEARNING_RATE = 1e-4
 LORA_R = 16
 LORA_ALPHA = 32
 VAL_SIZE = 1000
 SEED = 42
-SAVE_STEPS = 200
+SAVE_STEPS = _env_int("T2S_SAVE_STEPS", 200)
 LOG_STEPS = 10
 
-PUSH_TO_HUB = True
+PUSH_TO_HUB = _env_bool("T2S_PUSH_TO_HUB", True)
 PRIVATE = True
-LOG_TO_WANDB = True
+LOG_TO_WANDB = _env_bool("T2S_LOG_TO_WANDB", True)
 
 # Resume an interrupted run: set to a LOCAL checkpoint dir (has optimizer/scheduler state).
-# Continues at the same step/LR/data position. Leave None for a fresh run.
-RESUME_FROM = "out/text2sql-20260604-063837/checkpoint-2600"
+# Continues at the same step/LR/data position. Set T2S_RESUME_FROM="" for a fresh run.
+RESUME_FROM = _env_str("T2S_RESUME_FROM", "out/text2sql-20260604-063837/checkpoint-2600") or None
 
 # Smoke mode: tiny subset + few steps for a fast end-to-end correctness check.
-SMOKE = False
+SMOKE = _env_bool("T2S_SMOKE", False)
 TRAIN_SPLIT = "train"
 MAX_STEPS = -1
 if SMOKE:

@@ -1,0 +1,14 @@
+# Training-only deps for the QLoRA text2sql fine-tune on a Colab T4.
+# NOTE: torch + CUDA ship preinstalled on Colab GPU runtimes — do NOT reinstall
+# torch here or you risk breaking the CUDA build. vLLM/polars/sqlglot/openai are
+# only needed for serving + evaluation, not training, so they are intentionally
+# omitted to keep the VM install small and fast.
+transformers>=4.46
+trl>=1.5.1
+peft>=0.19.1
+bitsandbytes>=0.48.1
+accelerate>=1.13.0
+datasets>=4.8.5
+huggingface_hub>=0.27
+wandb>=0.27.1
+python-dotenv>=1.2.2

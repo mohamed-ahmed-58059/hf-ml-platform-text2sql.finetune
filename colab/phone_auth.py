@@ -20,7 +20,9 @@ import sys
 from google_auth_oauthlib.flow import Flow
 import colab_cli
 
-PKG = os.path.dirname(colab_cli.__file__)
+# colab_cli ships without an __init__.py (PEP 420 namespace package) in some
+# releases, so __file__ is None; fall back to the package __path__ in that case.
+PKG = os.path.dirname(colab_cli.__file__) if colab_cli.__file__ else list(colab_cli.__path__)[0]
 CLIENT = json.load(open(os.path.join(PKG, "oauth_config.json")))
 SCOPES = [
     "openid",

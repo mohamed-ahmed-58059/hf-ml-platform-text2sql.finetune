@@ -29,8 +29,14 @@ class ModelStage(Stage):
         tokenizer.pad_token = tokenizer.eos_token
         tokenizer.padding_side = "right"
 
+        # Load non-quantized params (and the LoRA adapters built on them) in the
+        # same dtype we compute in. Llama-3.1's config default is bfloat16; on a T4
+        # (compute capability < 8) training runs fp16=True with an fp16 GradScaler,
+        # which can't unscale bf16 grads ("_amp_foreach_non_finite_check_and_unscale_
+        # not implemented for BFloat16"). Forcing float16 here keeps dtypes consistent.
         model = AutoModelForCausalLM.from_pretrained(
             self.base_model, quantization_config=quant, device_map="auto",
+            torch_dtype=compute_dtype,
         )
         model.generation_config.pad_token_id = tokenizer.pad_token_id
 
